@@ -3,8 +3,6 @@ require 'uki/builder'
 require 'pusher'
 
 class UkiRoutes < Sinatra::Base
-  set :static, enable
-  
   get '/pusher' do
     app = Pusher::App.new(:channel => Pusher::Channel::AMQP.new)
     status, headers, body = app.call(@request.env)
@@ -25,5 +23,13 @@ class UkiRoutes < Sinatra::Base
       message = e.message.sub(/\n/, '\\n')
       "alert('#{message}')"
     end
+  end
+
+  get %r{.*} do
+    path = request.path.sub(%r{^/}, './')
+    path = File.join(path, 'index.html') if File.exists?(path) && File.directory?(path)
+    p path
+    pass unless File.exists?(path)
+    send_file path
   end
 end
