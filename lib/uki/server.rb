@@ -1,40 +1,26 @@
-require 'sinatra'
-require 'uki/routes'
+require 'rack'
 
 module Uki
   class Server
-    ##
-    # Host string.
-    
-    attr_reader :host
-    
-    ##
-    # Port number.
-    
-    attr_reader :port
-    
+    @@host = 'localhost'
+    @@port = 21119 # 21 u, 11 k, 9 i
+
+    def self.host
+      @@host
+    end
+
+    def self.port
+      @@port
+    end
     
     def initialize hoststr
-      @host, @port  = (hoststr || 'localhost').split(':')
-      @port ||= 21119 # 21 u, 11 k, 9 i
+      @host, @port  = (hoststr || @@host).split(':')
+      @port ||= @@port 
     end
     
     def start!
-      host, port = @host, @port # otherwise sinatra host and port will hide Server methods
-      Sinatra::Application.class_eval do
-        begin
-          $stderr.puts 'Started uki server at http://%s:%d' % [host, port.to_i]
-          detect_rack_handler.run self, :Host => host, :Port => port do |server|
-            trap 'INT' do
-              server.respond_to?(:stop!) ? server.stop! : server.stop
-            end
-          end
-        rescue Errno::EADDRINUSE
-          raise "Port #{port} already in use"
-        rescue Errno::EACCES
-          raise "Permission Denied on port #{port}"
-        end
-      end
+      server  = Rack::Server.new :Port => @port, :Host => @host, :config => File.join(File.dirname(__FILE__), 'config.ru')
+      server.start
     end
   end
   
