@@ -14,8 +14,10 @@ module Uki
     end
     
     def initialize hoststr
-      @host, @port  = (hoststr || @@host).split(':')
       @port ||= @@port 
+      @host, @port  = (hoststr || @@host).split(':')
+      @@port = @port if @port
+      @@host = @host if @host
     end
     
     def start!
