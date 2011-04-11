@@ -5,10 +5,10 @@ require 'pathname'
 require 'uki/builder'
 require 'base64'
 require 'digest/md5'
-require 'include_regexp'
 
 class Uki::Project
-  include UkiIncludeToken
+  CJS_REGEXP = %r{=\s*["']?(([^"' ]+).cjs)}
+  IMAGE_DATA_REGEXP = %r{\[[^"]*"([^"]+)"[^"]+"data:image/png;base64,([^"]+)"[^"\]]*(?:"([^"]+)"[^"\]]*)?\]}
   
   attr_accessor :dest
   

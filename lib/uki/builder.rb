@@ -49,7 +49,15 @@ module Uki
     end
 
     def compiled_js path
-      system "java -jar #{path_to_google_compiler} --js #{path} > #{path}.tmp" 
+      if options[:compressor] == :closure
+        system "/usr/local/bin/uki_closure_compressor #{path} #{path}.tmp"
+      elsif options[:compressor] == :yui
+        system "/usr/local/bin/uki_yui_compressor #{path} #{path}.tmp"
+      elsif options[:compressor] == :uglifyjs
+        system "/usr/local/bin/uki_uglifyjs_compressor #{path} #{path}.tmp"
+      else
+        system "/usr/local/bin/uki_uglifyjs_compressor_fast #{path} #{path}.tmp"
+      end
       code = File.read("#{path}.tmp")
       FileUtils.rm "#{path}.tmp"
       code
