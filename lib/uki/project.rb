@@ -5,9 +5,10 @@ require 'pathname'
 require 'uki/builder'
 require 'base64'
 require 'digest/md5'
+require 'include_regexp'
 
 class Uki::Project
-  CJS_REGEXP = %r{=\s*["']?(([^"' ]+).cjs)}
+  include UkiIncludeToken
   
   attr_accessor :dest
   
@@ -74,7 +75,7 @@ class Uki::Project
     contents = File.read(File.join(dest, target))
     place = File.join(dest, 'tmp', 'theme')
     # button-full/normal-v.png
-    contents.scan(%r{\[[^"]*"([^"]+)"[^"]+"data:image/png;base64,([^"]+)"[^"\]]*(?:"([^"]+)"[^"\]]*)?\]}) do
+    contents.scan(IMAGE_DATA_REGEXP) do
       p $1
       file = File.join(place, $1)
       FileUtils.mkdir_p File.dirname(file)
