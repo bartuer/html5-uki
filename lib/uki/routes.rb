@@ -14,22 +14,27 @@ class UkiRoutes < Sinatra::Base
   
   get %r{\.cjs$} do
     
-    path = request.path.sub(/(.[yguz])?\.cjs$/, '.js').sub(%r{^/}, './')
+    path = request.path.sub(/(.i)?(.[yguz])?\.cjs$/, '.js').sub(%r{^/}, './')
     pass unless File.exists? path
     
     response.header['Content-type'] = 'application/x-javascript; charset=UTF-8'
+    option = {}
     begin
       if match = request.path.match(/\.y\.cjs$/)
-        Uki::Builder.new(path, :compress => true, :compressor  => :yui).code
+        option = {:compress => true, :compressor  => :yui}
       elsif match = request.path.match(/\.g\.cjs$/)
-        Uki::Builder.new(path, :compress => true, :compressor => :closure).code
+        option = {:compress => true, :compressor  => :closure}
       elsif match = request.path.match(/\.u\.cjs$/)
-        Uki::Builder.new(path, :compress => true, :compressor => :uglifyjs).code
+        option = {:compress => true, :compressor  => :uglifyjs}
       elsif match = request.path.match(/\.z\.cjs$/)
-        Uki::Builder.new(path, :compress => true).code
+        option = {:compress => true}
       else
-        Uki::Builder.new(path).code          
+        option = { }
       end
+      if match = request.path.match(/\.i\.[yguz]\.cjs$/)
+        option.merge! :indent => true
+      end
+      Uki::Builder.new(path, option).code
     rescue Exception => e
       message = e.message.sub(/\n/, '\\n')
       "alert('#{message}')"

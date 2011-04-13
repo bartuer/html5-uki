@@ -58,7 +58,12 @@ module Uki
       else
         system "/usr/local/bin/uki_uglifyjs_compressor_fast #{path} #{path}.tmp"
       end
-      code = File.read("#{path}.tmp")
+      if options[:indent]
+        system "/usr/local/bin/uki_jsbeautify_indent #{path}.tmp #{path}.indent"
+        code = File.read("#{path}.indent")
+      else
+        code = File.read("#{path}.tmp")
+      end
       FileUtils.rm "#{path}.tmp"
       code
     end
