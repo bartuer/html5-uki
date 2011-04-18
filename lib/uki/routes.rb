@@ -1,7 +1,7 @@
 require 'sinatra/base'
 require 'uki/builder'
 require 'pusher'
-require 'uki/khtmlmin'
+require 'uki/htmlmin'
 
 class UkiRoutes < Sinatra::Base
   get '/pusher' do
