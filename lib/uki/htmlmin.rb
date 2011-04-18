@@ -36,6 +36,21 @@ eofstyle
         }
       end
 
+      def replace_dynamical_js_link
+        js_links = self.xpath('//body/script')
+        js_links.each { |js_link|
+          if js_link['src'].match(/(.i)?(.[yguz])?\.cjs$/)
+            src = js_link['src']
+            static_link = Nokogiri::HTML::Document.new.fragment(<<-eofjslink)
+<script src="#{src.gsub(/http.*\/javascripts/,'/javascripts').gsub(/\.i\./,'.').gsub(/\.[ugyz]\./, '.').gsub(/\.cjs$/, '.js')}">
+</script>
+eofjslink
+            js_link.before static_link.to_html
+            js_link.unlink
+          end
+        }
+      end
+
       def minify_html
         Open3.popen3("tidy -q -wrap 10000 -utf8|sed -e 's+<meta name=\"generator\".*$++g'|awk 'BEGIN {ORS=\"\"}{print}'") { |i,o,e|
           i.puts self.to_html(:encoding => 'UTF-8', :indent => 0)
@@ -47,10 +62,9 @@ eofstyle
       def to_minify_html(url='http://localhost')
         remove_dev_link
         replace_css_link_with_minify_content url
+        replace_dynamical_js_link
         minify_html
       end
     end
   end
 end
-
-
