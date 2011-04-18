@@ -1,6 +1,7 @@
 require 'sinatra/base'
 require 'uki/builder'
 require 'pusher'
+require 'uki/khtmlmin'
 
 class UkiRoutes < Sinatra::Base
   get '/pusher' do
@@ -41,6 +42,13 @@ class UkiRoutes < Sinatra::Base
     end
   end
 
+  get %r{\.chtml$} do
+    path = request.path.sub(/\.chtml$/, '.html').sub(%r{^/}, './')
+    pass unless File.exists? path
+    response.header['Content-type'] = 'text/html; charset=UTF-8'
+    Nokogiri::HTML(open(path)).to_minify_html "#{request.host}:#{request.port}"
+  end
+  
   get %r{.*} do
     path = request.path.sub(%r{^/}, './')
     path = File.join(path, 'index.html') if File.exists?(path) && File.directory?(path)
