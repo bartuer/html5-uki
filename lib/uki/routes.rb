@@ -46,7 +46,7 @@ class UkiRoutes < Sinatra::Base
     path = request.path.sub(/\.chtml$/, '.html').sub(%r{^/}, './')
     pass unless File.exists? path
     response.header['Content-type'] = 'text/html; charset=UTF-8'
-    Nokogiri::HTML(open(path)).to_minify_html "#{request.host}:#{request.port}"
+    Nokogiri::HTML(open(path)).to_minify_html "#{request.scheme}://#{request.host}"
   end
   
   get %r{.*} do

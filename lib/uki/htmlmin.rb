@@ -21,7 +21,7 @@ module Nokogiri
           else
             css_url = url + css_link['href']
           end
-          stylesheet_content = open('http://localhost' + css_link['href'])
+          stylesheet_content = open(css_url)
           Open3.popen3('css_minify') { |i, o, e|
             i.puts stylesheet_content.read
             i.close
