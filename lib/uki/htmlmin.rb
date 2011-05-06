@@ -7,9 +7,11 @@ module Nokogiri
   module HTML
     class Document
       def remove_dev_link
-        jspec_css_link = self.xpath('//head/link[@type = "text/css" and @href="/stylesheets/jspec_min.css"]').first
+        jspec_min_css_link = self.xpath('//head/link[@type = "text/css" and @href="/stylesheets/jspec_min.css"]').first
+        jspec_css_link = self.xpath('//head/link[@type = "text/css" and @href="/stylesheets/jspec.css"]').first
         dev_bundle_link = self.xpath('//body/script[@src = "/javascripts/dev.bundle.js"]').first
         jspec_css_link.unlink if jspec_css_link
+        jspec_min_css_link.unlink if jspec_min_css_link
         dev_bundle_link.unlink if dev_bundle_link
       end
 
