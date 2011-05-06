@@ -48,6 +48,13 @@ class UkiRoutes < Sinatra::Base
     response.header['Content-type'] = 'text/html; charset=UTF-8'
     Nokogiri::HTML(open(path)).to_minify_html "#{request.scheme}://#{request.host}"
   end
+
+  get %r{\.z\.json$} do
+    path = request.path.sub(/\.z\.json$/, '.json').sub(%r{^/}, './')
+    pass unless File.exists? path
+    response.header['Content-type'] = 'text/json; charset=UTF-8'
+    `/usr/local/bin/uki_json_minify #{path}`
+  end
   
   get %r{.*} do
     path = request.path.sub(%r{^/}, './')
