@@ -18,6 +18,10 @@ module Uki
       options[:compress] ? compressed_code : plain_code
     end
 
+    def minified_css
+      compiled_css @path
+    end
+
   protected
     def compressed_code
       unless @compressed_code

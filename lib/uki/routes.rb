@@ -42,11 +42,17 @@ class UkiRoutes < Sinatra::Base
     end
   end
 
-  get %r{\.chtml$} do
-    path = request.path.sub(/\.chtml$/, '.html').sub(%r{^/}, './')
+  get %r{\.[cf]html$} do
+    path = request.path.sub(/\.[cf]html$/, '.html').sub(%r{^/}, './')
     pass unless File.exists? path
     response.header['Content-type'] = 'text/html; charset=UTF-8'
-    Nokogiri::HTML(open(path)).to_minify_html "#{request.scheme}://#{request.host}"
+    if request.path.match /\.chtml/
+      Nokogiri::HTML(open(path)).to_minify_html "#{request.scheme}://#{request.host}", true      
+    elsif request.path.match /\.fhtml/
+      Nokogiri::HTML(open(path)).to_minify_html "#{request.scheme}://#{request.host}", false
+    else
+      [500, "text/plain", request.path]
+    end
   end
 
   get %r{\.z\.json$} do
@@ -54,6 +60,13 @@ class UkiRoutes < Sinatra::Base
     pass unless File.exists? path
     response.header['Content-type'] = 'text/json; charset=UTF-8'
     `/usr/local/bin/uki_json_minify #{path}`
+  end
+
+  get %r{\.m\.css$} do
+    path = request.path.sub(/\.m\.css$/, '.css').sub(%r{^/}, './')
+    pass unless File.exists? path
+    response.header['Content-type'] = 'text/stylesheets; charset=UTF-8'
+    Uki::Builder.new(path).minified_css
   end
   
   get %r{.*} do

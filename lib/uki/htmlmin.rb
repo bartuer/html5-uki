@@ -59,9 +59,9 @@ eofjslink
         }
       end
 
-      def to_minify_html(url='http://localhost')
+      def to_minify_html(url='http://localhost', replace_css=true)
         remove_dev_link
-        replace_css_link_with_minify_content url
+        replace_css_link_with_minify_content url if replace_css
         replace_dynamical_js_link
         minify_html
       end
