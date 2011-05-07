@@ -15,7 +15,7 @@ class UkiRoutes < Sinatra::Base
   
   get %r{\.cjs$} do
     
-    path = request.path.sub(/(.i)?(.[yguz])?\.cjs$/, '.js').sub(%r{^/}, './')
+    path = request.path.sub(/(\.i)?(\.[yguz])?\.cjs$/, '.js').sub(%r{^/}, './')
     pass unless File.exists? path
     
     response.header['Content-type'] = 'application/x-javascript; charset=UTF-8'
