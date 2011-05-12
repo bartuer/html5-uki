@@ -21,9 +21,14 @@ module Uki
     end
     
     def start!
-      server  = Rack::Server.new :Port => @port, :Host => @host, :config => File.join(File.dirname(__FILE__), 'config.ru')
-      server.start
+      Rack::Handler::Thin.run(UkiRoutes,
+                              :Host => Uki::Server.host,
+                              :Port => Uki::Server.port,
+                              :config => File.join(File.dirname(__FILE__), 'config.ru')) { |server|
+        trap 'INT' do
+          server.respond_to?(:stop!) ? server.stop! : server.stop
+        end
+      }
     end
   end
-  
 end
