@@ -1,4 +1,5 @@
 require 'rack'
+require File.join(File.dirname(__FILE__), 'routes.rb')
 
 module Uki
   class Server
