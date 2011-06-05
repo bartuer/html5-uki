@@ -3,7 +3,7 @@ require File.join(File.dirname(__FILE__), 'routes.rb')
 
 module Uki
   class Server
-    @@host = 'localhost'
+    @@host = '0.0.0.0'
     @@port = 21119 # 21 u, 11 k, 9 i
 
     def self.host
