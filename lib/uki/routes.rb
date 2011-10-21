@@ -77,8 +77,15 @@ class UkiRoutes < Sinatra::Base
   get %r{.*} do
     path = request.path.sub(%r{^/}, './')
     path = File.join(path, 'index.html') if File.exists?(path) && File.directory?(path)
-    p path
     pass unless File.exists?(path)
+    affix = path[path.rindex('.')..-1]
+    forbid = ['.rb', '.sqlite', '.db']
+    if forbid.include?(affix) || path.include?('.git')
+      p 'access server code ? ' + path
+      halt
+    else
+      p path
+    end
     send_file path
   end
 end
