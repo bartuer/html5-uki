@@ -80,7 +80,7 @@ class UkiRoutes < Sinatra::Base
     pass unless File.exists?(path)
     affix = path[path.rindex('.')..-1]
     forbid = ['.rb', '.sqlite', '.db']
-    if forbid.include?(affix) || path.include?('.git')
+    if forbid.include?(affix) || path.include?('.git') || path.include?('..')
       p 'access server code ? ' + path
       halt
     else
