@@ -1,3 +1,4 @@
+require 'thin'
 require 'rack'
 require File.join(File.dirname(__FILE__), 'routes.rb')
 
@@ -22,14 +23,15 @@ module Uki
     end
     
     def start!
-      Rack::Handler::Thin.run(UkiRoutes,
-                              :Host => Uki::Server.host,
-                              :Port => Uki::Server.port,
-                              :config => File.join(File.dirname(__FILE__), 'config.ru')) { |server|
-        trap 'INT' do
-          server.respond_to?(:stop!) ? server.stop! : server.stop
-        end
-      }
+      app = Rack::Builder.app do
+        use Rack::Deflater
+        run UkiRoutes.new
+      end
+      server = ::Thin::Server.new(
+                         Uki::Server.host,
+                         Uki::Server.port,
+                         app) 
+      server.start
     end
   end
 end

@@ -1,9 +1,14 @@
+require 'sinatra'
 require 'sinatra/base'
+require 'sinatra/reloader'
 require 'uki/builder'
 require 'pusher'
 require 'uki/htmlmin'
 
+
 class UkiRoutes < Sinatra::Base
+  register Sinatra::Reloader
+
   get '/pusher' do
     app = Pusher::App.new(:channel => Pusher::Channel::AMQP.new)
     status, headers, body = app.call(@request.env)
