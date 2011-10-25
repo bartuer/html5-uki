@@ -1,5 +1,6 @@
 require 'thin'
 require 'rack'
+require File.join(File.dirname(__FILE__), 'deflater.rb')
 require File.join(File.dirname(__FILE__), 'routes.rb')
 
 module Uki
