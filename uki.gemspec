@@ -58,6 +58,7 @@ Gem::Specification.new do |s|
      "lib/uki/include_js.rb",
      "lib/uki/project.rb",
      "lib/uki/routes.rb",
+     "lib/uki/deflater.rb",
      "lib/uki/server.rb",
      "templates/controller.js.erb",
      "templates/index.html.erb",
