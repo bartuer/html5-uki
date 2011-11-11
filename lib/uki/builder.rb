@@ -26,8 +26,8 @@ module Uki
     def compressed_code
       unless @compressed_code
         code = Uki.include_js(path) do |path|
-          if path.match(/.css$/)
-            compiled_css path
+          if @options[:is_min_css]
+            compiled_css(path)
           else
             File.read(path)
           end
@@ -35,7 +35,11 @@ module Uki
         Tempfile.open('w') { |file|
           file.write(code)
           file.flush
-          @compressed_code = compiled_js(file.path)
+          if @options[:is_css]
+            @compressed_code = code
+          else
+            @compressed_code = compiled_js(file.path)            
+          end
         }
       end
       @compressed_code
@@ -46,7 +50,7 @@ module Uki
     end
 
     def compiled_css path
-      system "java -jar #{path_to_yui_compressor} #{path} > #{path}.tmp"
+      system "/usr/local/bin/uki_yui_css_compressor #{path} #{path}.tmp"
       code = File.read("#{path}.tmp")
       FileUtils.rm "#{path}.tmp"
       code

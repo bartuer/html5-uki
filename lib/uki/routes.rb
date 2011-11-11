@@ -47,6 +47,19 @@ class UkiRoutes < Sinatra::Base
     end
   end
 
+   get %r{\.css$} do
+    path = request.path.sub(/\.m\.css$/, '.css').sub(%r{^/}, './')
+    pass unless File.exists? path
+    response.header['Content-type'] = 'text/css'
+    option = {:compress => true, :is_css => true, :is_min_css => request.path.match(%r{\.m\.css})}
+    begin
+      Uki::Builder.new(path, option).code
+    rescue Exception => e
+      message = e.message.sub(/\n/, '\\n')
+      "alert('#{message}')"
+    end
+  end
+
   get %r{\.[cf]html$} do
     path = request.path.sub(/\.[cf]html$/, '.html').sub(%r{^/}, './')
     pass unless File.exists? path
@@ -65,13 +78,6 @@ class UkiRoutes < Sinatra::Base
     pass unless File.exists? path
     response.header['Content-type'] = 'text/json; charset=UTF-8'
     `/usr/local/bin/uki_json_minify #{path}`
-  end
-
-  get %r{\.m\.css$} do
-    path = request.path.sub(/\.m\.css$/, '.css').sub(%r{^/}, './')
-    pass unless File.exists? path
-    response.header['Content-type'] = 'text/stylesheets; charset=UTF-8'
-    Uki::Builder.new(path).minified_css
   end
   
   get %r{.*} do
