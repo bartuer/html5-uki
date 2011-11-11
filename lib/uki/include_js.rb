@@ -1,13 +1,12 @@
 require 'json'
 
 module Uki
-  INCLUDE_REGEXP = %r{((?:^|\n)[^\n]\W|^|\n)\s*include\s*\(\s*['"]([^"']+)["']\s*\)(?:\s*;)?(.*?\r?\n|$)}
-  INCLUDE_CSS_REGEXP = %r{include_css\s*\(\s*['"]([^"']+)["']\s*\)}
-
+  require File.join(File.dirname(__FILE__), 'include_regexp.rb')
   #
   # Preprocesses include() calls in js files
   def self.include_js path, included = {}, stack = [], &block
     raise Exception.new("File #{path} not found.\nStack: #{stack.join(' -> ')}") unless File.exists?(path)
+    puts path
     path = File.expand_path path
     base = File.dirname(path)
     code = if block_given? 
@@ -39,7 +38,7 @@ module Uki
     else 
       File.read(path) 
     end
-    JSON.dump code
+    code
   end
   
   def self.extract_includes path
