@@ -48,10 +48,13 @@ class UkiRoutes < Sinatra::Base
   end
 
    get %r{\.css$} do
-    path = request.path.sub(/\.m\.css$/, '.css').sub(%r{^/}, './')
+    path = request.path.sub(/\.[my].css$/, '.css').sub(%r{^/}, './')
     pass unless File.exists? path
     response.header['Content-type'] = 'text/css'
-    option = {:compress => true, :is_css => true, :is_min_css => request.path.match(%r{\.m\.css})}
+    option = {:compress => true, :is_css => true, :is_min_css => request.path.match(%r{\.[my]\.css})}
+    if request.path.match(/\.y\.css$/)
+      option[:compressor] = :yui
+    end
     begin
       Uki::Builder.new(path, option).code
     rescue Exception => e

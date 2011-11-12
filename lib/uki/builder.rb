@@ -50,7 +50,11 @@ module Uki
     end
 
     def compiled_css path
-      system "/usr/local/bin/uki_yui_css_compressor #{path} #{path}.tmp"
+      if options[:compressor] == :yui
+        system "/usr/local/bin/uki_yui_css_compressor #{path} #{path}.tmp"
+      else
+        system "/usr/local/bin/uki_my_css_compressor #{path} #{path}.tmp"
+      end
       code = File.read("#{path}.tmp")
       FileUtils.rm "#{path}.tmp"
       code
