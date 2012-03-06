@@ -19,7 +19,7 @@ module Pusher
     def initialize(options={})
       @session_key = options[:session_key] || "session_id"
       @channel_key = options[:channel_key] || "channel_id"
-      @channel = options[:channel] || Channel::AMQP.new
+      @channel = options[:channel] || Channel::InMemory.new
       @logger = options[:logger]
       @ping_interval = options[:ping_interval] || 5
       @started = false
