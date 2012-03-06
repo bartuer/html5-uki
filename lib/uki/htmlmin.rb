@@ -41,7 +41,7 @@ eofstyle
       def replace_dynamical_js_link
         js_links = self.xpath('//body/script')
         js_links.each { |js_link|
-          if js_link['src'].match(/(.i)?(.[yguz])?\.cjs$/)
+          if js_link['src'] && js_link['src'].match(/(.i)?(.[yguz])?\.cjs$/)
             src = js_link['src']
             static_link = Nokogiri::HTML::Document.new.fragment(<<-eofjslink)
 <script src="#{src.gsub(/http.*\/javascripts/,'/javascripts').gsub(/\.i\./,'.').gsub(/\.[ugyz]\./, '.').gsub(/\.cjs$/, '.js')}">
