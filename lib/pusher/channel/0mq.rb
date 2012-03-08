@@ -11,7 +11,6 @@ module MessageHandler
   
   def receive_data(data)
     content = data.split(Regexp.new(@channel_id+'\s+'))[1]
-    puts "Recieved: -- session[#{@session_id}] <- { channel: #{@channel_id}, content : #{content}}"
     @transport.write content
   end
 end

@@ -43,12 +43,12 @@ module Pusher
           @channel.connections.each { |k,v|
             if k.to_s == session_id
               @channel.connections[k].socket.close # close ZMQ socket
-              @logger.info "Close ZMQ connections[#{k.to_s}]: #{v}"
+              @logger.info "Close ZMQ connections[#{k.to_s}]: #{v}" if @logger
               @channel.connections.delete(k)       # remove cache item
               # EM watch handler will remove when next read unavailable due closed socket
             end
           }
-          @logger.info "Total ZMQ connections:#{@channel.connections.size}"
+          @logger.info "Total ZMQ connections:#{@channel.connections.size}" if @logger
         end
       }
       
