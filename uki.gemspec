@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{uki}
-  s.version = "2.5.1"
+  s.version = "2.5.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Vladimir Kolesnikov"]
-  s.date = %q{2012-03-07}
+  s.date = %q{2012-03-08}
   s.default_executable = %q{uki}
   s.description = %q{Project creation, dev server, testing, building for uki apps}
   s.email = %q{voloko@gmail.com}
@@ -41,9 +41,14 @@ Gem::Specification.new do |s|
      "frameworks/uki/happy.txt",
      "java/compiler.jar",
      "java/yuicompressor.jar",
+     "lib/eventmachine/zmq.rb",
+     "lib/eventmachine/zmq/connection.rb",
+     "lib/eventmachine/zmq/context.rb",
+     "lib/eventmachine/zmq/version.rb",
      "lib/pusher.rb",
      "lib/pusher/app.rb",
      "lib/pusher/channel.rb",
+     "lib/pusher/channel/0mq.rb",
      "lib/pusher/channel/amqp.rb",
      "lib/pusher/channel/in_memory.rb",
      "lib/pusher/deferrable_body.rb",
@@ -71,7 +76,6 @@ Gem::Specification.new do |s|
      "templates/spec.html.erb",
      "templates/spec.js.erb",
      "templates/view.js.erb",
-     "uki-2.3.7.gem",
      "uki.gemspec"
   ]
   s.homepage = %q{http://github.com/voloko/uki}
