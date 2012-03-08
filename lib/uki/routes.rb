@@ -4,13 +4,14 @@ require 'sinatra/reloader'
 require 'uki/builder'
 require 'pusher'
 require 'uki/htmlmin'
-
+require 'logger'
 
 class UkiRoutes < Sinatra::Base
   register Sinatra::Reloader
 
   get '/pusher' do
-    app = Pusher::App.new(:channel => Pusher::Channel::AMQP.new)
+    app = Pusher::App.new(:channel => Pusher::Channel::ZMQ.new({:host => "127.0.0.1", :port => "5556"}),
+                          :logger => Logger.new(STDOUT))
     status, headers, body = app.call(@request.env)
     @response.status = status
     @response.body = body
