@@ -40,7 +40,7 @@ module Pusher
       transport.on_close {
         @logger.info "Connection closed on channel #{channel_id} from #{session_id}" if @logger
         if @channel.class == Pusher::Channel::ZMQ
-          @logger.info "Closing ZMQ connections[#{@channel.session_id}]" if @logger
+          @logger.info "Closing ZMQ connection #{@channel.session_id}" if @logger
           @channel.unsubscribe
         end
       }
