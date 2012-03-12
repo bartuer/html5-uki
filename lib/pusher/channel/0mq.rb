@@ -18,21 +18,20 @@ end
 module Pusher
   module Channel
     class ZMQ
-      attr_reader :connection, :session_id
+      attr_reader :connections
 
       def initialize(options={})
         @options = options.merge({:topic => ''})
         @context = EM::ZMQ::Context.new(1)
-        @connection = nil
-        @session_id = nil
+        @connections = {}
       end
       
       def subscribe(channel_id, session_id, transport)
-        if @connection == nil
+        if @connections[session_id.to_sym] == nil
           sock_url = "tcp://#{@options[:host]}:#{@options[:port]}"
           subscriber =  @context.connect :sub, sock_url, MessageHandler, transport, session_id, channel_id
         else
-          subscriber = @connection
+          subscriber = @connections[session_id.to_sym]
         end
 
         EM.next_tick do
@@ -40,18 +39,16 @@ module Pusher
           if subscriber.notify_readable?
             channel = channel_id ? channel_id : @options[:topic]
             subscriber.subscribe channel
-            @connection = subscriber
-            @session_id = session_id
+            @connections[session_id.to_sym] = subscriber
           end
           end
         end
       end
 
-      def unsubscribe
-        if @connection
-          @connection.close
-          @connection = nil
-          @session_id = nil
+      def unsubscribe(session_id)
+        if @connections[session_id.to_sym]
+          @connections[session_id.to_sym].close
+          @connections.delete(session_id.to_sym)
         end
       end
       

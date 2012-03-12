@@ -40,9 +40,10 @@ module Pusher
       transport.on_close {
         @logger.info "Connection closed on channel #{channel_id} from #{session_id}" if @logger
         if @channel.class == Pusher::Channel::ZMQ
-          @logger.info "Closing ZMQ connection #{@channel.session_id}" if @logger
-          @channel.unsubscribe
+          @logger.info "Closing ZMQ connections[#{session_id}]" if @logger
+          @channel.unsubscribe(session_id)
         end
+        @logger.info "Current ZMQ connections: #{@channel.connections.size}" if @logger
       }
       
       EM.next_tick { env[ASYNC_CALLBACK].call transport.render }
