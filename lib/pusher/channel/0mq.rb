@@ -18,36 +18,44 @@ end
 module Pusher
   module Channel
     class ZMQ
-      attr_reader :connections
+      attr_reader :connection, :session_id
 
       def initialize(options={})
         @options = options.merge({:topic => ''})
-        @connected = false
         @context = EM::ZMQ::Context.new(1)
-        @connections = {}
+        @connection = nil
+        @session_id = nil
       end
       
       def subscribe(channel_id, session_id, transport)
-        connect(channel_id, session_id, transport) unless @connected
+        if @connection == nil
+          sock_url = "tcp://#{@options[:host]}:#{@options[:port]}"
+          subscriber =  @context.connect :sub, sock_url, MessageHandler, transport, session_id, channel_id
+        else
+          subscriber = @connection
+        end
+
+        EM.next_tick do
+          EM.next_tick do
+          if subscriber.notify_readable?
+            channel = channel_id ? channel_id : @options[:topic]
+            subscriber.subscribe channel
+            @connection = subscriber
+            @session_id = session_id
+          end
+          end
+        end
+      end
+
+      def unsubscribe
+        if @connection
+          @connection.close
+          @connection = nil
+          @session_id = nil
+        end
       end
       
       def publish(channel_id, message)
-      end
-      private
-      def connect(channel_id, session_id, transport)
-        return if @connected
-        sock_url = "tcp://#{@options[:host]}:#{@options[:port]}"
-        subscriber =  @context.connect :sub, sock_url, MessageHandler, transport, session_id, channel_id
-        @connections[session_id.to_sym] = subscriber
-        if channel_id
-          subscriber.subscribe channel_id
-        else
-          subscriber.subscribe @options[:topic]
-        end
-
-        if subscriber.readable?
-          @connected = true
-        end
       end
     end
   end

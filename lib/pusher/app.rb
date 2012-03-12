@@ -40,15 +40,8 @@ module Pusher
       transport.on_close {
         @logger.info "Connection closed on channel #{channel_id} from #{session_id}" if @logger
         if @channel.class == Pusher::Channel::ZMQ
-          @channel.connections.each { |k,v|
-            if k.to_s == session_id
-              @channel.connections[k].socket.close # close ZMQ socket
-              @logger.info "Close ZMQ connections[#{k.to_s}]: #{v}" if @logger
-              @channel.connections.delete(k)       # remove cache item
-              # EM watch handler will remove when next read unavailable due closed socket
-            end
-          }
-          @logger.info "Total ZMQ connections:#{@channel.connections.size}" if @logger
+          @logger.info "Closing ZMQ connections[#{@channel.session_id}]" if @logger
+          @channel.unsubscribe
         end
       }
       

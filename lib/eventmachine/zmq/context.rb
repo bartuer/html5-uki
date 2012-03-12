@@ -29,8 +29,10 @@ module EventMachine
         conn.instance_variable_set(:@socket, sock)
         name = sock.instance_variable_get(:@name)
         if READ.include? name.downcase.to_sym
-          conn.notify_readable if conn.readable?
-          conn.notify_readable = true
+          EM.next_tick do
+            conn.notify_readable if conn.readable?
+            conn.notify_readable = true
+          end
         end
 
         if WRITE.include? name.downcase.to_sym

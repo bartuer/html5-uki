@@ -12,6 +12,10 @@ module EventMachine
         socket.connect addr
       end
 
+      def close
+        detach
+      end
+      
       def subscribe channel
         socket.setsockopt ::ZMQ::SUBSCRIBE, channel
       end
@@ -29,10 +33,10 @@ module EventMachine
       end
 
       def readable?
-        r = (socket.getsockopt(::ZMQ::EVENTS) & ZMQ::POLLIN) == ZMQ::POLLIN
-        r
+        r = (socket.getsockopt(::ZMQ::EVENTS) & EventMachine::ZMQ::POLLIN) == EventMachine::ZMQ::POLLIN
       rescue IOError
         detach
+        false
       end
 
       def notify_readable
