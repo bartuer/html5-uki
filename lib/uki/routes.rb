@@ -57,7 +57,13 @@ class UkiRoutes < Sinatra::Base
       option[:compressor] = :yui
     end
     begin
-      Uki::Builder.new(path, option).code
+      css_text = File.read(path)
+      if css_text.match(INCLUDE_CSS_REGEXP)
+        Uki::Builder.new(path, option).code
+      else
+        last_modified File.mtime(path)
+        css_text
+      end
     rescue Exception => e
       message = e.message.sub(/\n/, '\\n')
       "alert('#{message}')"

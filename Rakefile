@@ -1,8 +1,8 @@
 require 'rubygems'
 require 'rake'
+require 'jeweler'
 
 begin
-  require 'jeweler'
   Jeweler::Tasks.new do |gem|
     gem.name = "uki"
     gem.summary = %Q{uki development tools}
