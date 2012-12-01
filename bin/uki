@@ -109,7 +109,7 @@ command :run do |c|
   c.when_called do |args, options|
     require 'uki/server.rb'
     server = Uki::Server.new(args.shift)
-    require 'server.rb' if File.exists? 'server.rb'
+    require './server.rb' if File.exists? 'server.rb'
     server.start!
   end
 end
